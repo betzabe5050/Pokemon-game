@@ -1,4 +1,5 @@
 import { computed, onMounted, ref } from 'vue'
+import confetti from 'canvas-confetti'
 import { GameStatus, type Pokemon, type PokemonListResponse } from "../interfaces"
 import { pokemonApi } from '../api/pokemonApi';
 
@@ -7,6 +8,7 @@ export const usePokemonGame = () => {
     const gameStatus = ref<GameStatus>(GameStatus.Playing);
     const pokemons = ref<Pokemon[]>([])
     const pokemonOptions = ref<Pokemon[]>([]);
+    const correctPokemon = ref<Pokemon | null>(null);
     const isLoading = computed(() => pokemons.value.length === 0);
 
     const getPokemons = async () => {
@@ -22,10 +24,24 @@ export const usePokemonGame = () => {
         return pokemonsArray.sort(() => Math.random() - 0.5);
     };
 
-    const getNextOptions = (howMany: number = 10 ) => {
+    const getNextOptions = (howMany: number = 4 ) => {
         gameStatus.value = GameStatus.Playing;
+        pokemons.value.sort(() => Math.random() - 0.5);
         pokemonOptions.value = pokemons.value.slice(0, howMany);
-        pokemons.value = pokemons.value.slice(howMany);
+
+        const randomIndex = Math.floor(Math.random() * pokemonOptions.value.length);
+        correctPokemon.value = pokemonOptions.value[randomIndex] ?? null;
+    };
+    
+//validar respuestaa y confetti
+const checkAnswer = (id: number) => {
+        if (gameStatus.value !== GameStatus.Playing) return;
+        if (id === correctPokemon.value?.id) {
+            gameStatus.value = GameStatus.Won;
+            confetti({ particleCount: 300, spread: 150, origin: { y: 0.6 } });
+        } else {
+            gameStatus.value = GameStatus.Lost;
+        }
     };
 
 
@@ -42,7 +58,9 @@ export const usePokemonGame = () => {
         gameStatus,
         isLoading,
         pokemonOptions,
+        correctPokemon, 
         // Methods
         getNextOptions,
+        checkAnswer
     };
 }
