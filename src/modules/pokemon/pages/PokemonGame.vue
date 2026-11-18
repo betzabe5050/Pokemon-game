@@ -6,6 +6,7 @@
 
     <section v-else class="flex flex-col justify-center items-center w-screen h-screen">
         <h1 class="mt-5">¿Quién es este Pokémon?</h1>
+        <ContadorJuegos :wins='wins' :losses='losses' />
 
         <!-- Pokémon Picture -->
         <PokemonPicture
@@ -48,12 +49,15 @@ import PokemonOptions from '@/components/PokemonOptions.vue';
 import PokemonPicture from '../components/PokemonPicture.vue';
 import { GameStatus } from '../interfaces/game-status-enum';
 import { usePokemonGame } from '../composables/usePokemonGame'; 
+import ContadorJuegos from '../components/ContadorJuegos.vue';
 
 const {
     gameStatus,
     isLoading,
     pokemonOptions,
     correctPokemon,
+    wins, 
+    losses, 
     getNextOptions,
     checkAnswer,
 } = usePokemonGame();

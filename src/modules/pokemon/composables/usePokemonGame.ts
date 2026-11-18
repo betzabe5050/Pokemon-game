@@ -9,6 +9,8 @@ export const usePokemonGame = () => {
     const pokemons = ref<Pokemon[]>([])
     const pokemonOptions = ref<Pokemon[]>([]);
     const correctPokemon = ref<Pokemon | null>(null);
+    const wins = ref(0)
+    const losses = ref(0)
     const isLoading = computed(() => pokemons.value.length === 0);
 
     const getPokemons = async () => {
@@ -38,9 +40,11 @@ const checkAnswer = (id: number) => {
         if (gameStatus.value !== GameStatus.Playing) return;
         if (id === correctPokemon.value?.id) {
             gameStatus.value = GameStatus.Won;
+            wins.value++
             confetti({ particleCount: 300, spread: 150, origin: { y: 0.6 } });
         } else {
             gameStatus.value = GameStatus.Lost;
+            losses.value++
         }
     };
 
@@ -58,7 +62,9 @@ const checkAnswer = (id: number) => {
         gameStatus,
         isLoading,
         pokemonOptions,
-        correctPokemon, 
+        correctPokemon,
+        wins,
+        losses, 
         // Methods
         getNextOptions,
         checkAnswer
